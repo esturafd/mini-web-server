@@ -24,12 +24,20 @@ dependencies {
     implementation 'com.google.guava:guava:30.1.1-jre'
 }
 
+ext.appMainClass = 'me.esturafd.webserver.App'
+
 application {
     // Define the main class for the application.
-    mainClass = 'me.esturafd.webserver.App'
+    mainClass = appMainClass
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+task runExample(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = appMainClass
+    args 'example/index.html'
 }
