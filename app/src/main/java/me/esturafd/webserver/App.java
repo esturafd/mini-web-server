@@ -3,8 +3,20 @@
  */
 package me.esturafd.webserver;
 
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class App {
     public static void main(String[] args) {
-        new WebServer(80, args.length > 0? args[0]: null).start();
+        RequestStorage storage = new RequestStorage(100);
+        File path = args.length > 0 && !args[0].isEmpty()? new File(args[0]): null;
+        List<RequestProcessor> processors = IntStream
+            .range(0, 20)
+            .mapToObj(n -> new RequestProcessor(storage, path))
+            .collect(Collectors.toUnmodifiableList());
+        processors.forEach(RequestProcessor::start);
+        new WebServer(80, storage).start();
     }
 }
