@@ -22,14 +22,10 @@ public class RequestStorage {
     }
 
     public void consume(ConsumerAction<Socket> action) {
-        System.out.println("1.consumo de storage: " + socketQueue.size());
         try {
             locker.lock();
-            System.out.println("is empty: " + socketQueue.isEmpty());
             if (socketQueue.isEmpty()) {
-                System.out.println("antes del await");
                 queueIsEmpty.await();
-                System.out.println("despues del await");
             }
             Socket socket = socketQueue.poll();
             if (socket != null) action.consume(socket);
@@ -45,7 +41,6 @@ public class RequestStorage {
             locker.lock();
             if (socketQueue.size() == capacity) return;
             socketQueue.offer(action.produce());
-            System.out.println("termina produce");
             queueIsEmpty.signal();
         } finally {
             locker.unlock();

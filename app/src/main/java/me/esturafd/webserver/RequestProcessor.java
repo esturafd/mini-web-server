@@ -20,22 +20,16 @@ public class RequestProcessor extends Thread {
 
     @Override
     public void run() {
-        while (true) { 
-            System.out.println("hilo process init");
-            storage.consume(this::process);
-            System.out.println("hilo process final");
-        }
+        while (true) storage.consume(this::process);
     }
 
     private void process(Socket socket) {
-        System.out.println("Se empiesa a leer request");
         try (BufferedOutputStream output = new BufferedOutputStream(socket.getOutputStream())) {
             output.write(new Response(getContent(), "text/html", 200).getBytes());
             output.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Se termina de procesar request");
     }
 
     private String getContent() {
